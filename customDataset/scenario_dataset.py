@@ -1,6 +1,7 @@
 # %%
 import os
 import cv2 as cv
+import datumaro as dm
 
 # Opens the Video file
 cap = cv.VideoCapture('/home/thomas/Datasets/scenario/scenario.mp4')
@@ -8,7 +9,7 @@ stats = dict()
 stats['num_frames'] = cap.get(cv.CAP_PROP_FRAME_COUNT)
 stats['fps'] = cap.get(cv.CAP_PROP_FPS)
 print(f'stats: {stats}')
-num_images = stats['num_frames']/15
+num_images = stats['num_frames'] / 15
 print(f'num_images: {num_images}')
 
 # %%
@@ -34,3 +35,7 @@ while cap.isOpened():
         break
 cap.release()
 cv.destroyAllWindows()
+
+# %%
+dm.Dataset.import_from('/home/thomas/Datasets/SCENARIO/cvat/4k/', 'cvat') \
+    .export('/home/thomas/Datasets/SCENARIO/yolo/4k/', 'yolo', save_images=True)
