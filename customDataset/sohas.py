@@ -1,6 +1,6 @@
 # %%
 import datumaro as dm
-from utils import images_paths_to_text, split_dataset, PATH
+from utils import split_dataset, PATH
 from datumaro.components.operations import compute_ann_statistics
 
 # images_paths_to_text('/home/thomas/Datasets/sohas_yolo/val')

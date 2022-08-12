@@ -1,7 +1,7 @@
 # %%
-from utils import intersect_merge_datasets, PATH, merge_datasets, split_dataset
+from utils import PATH, merge_datasets
 import datumaro as dm
-from datumaro.components.operations import compute_ann_statistics, IntersectMerge, ExactMerge
+from datumaro.components.operations import compute_ann_statistics
 
 # %% merge coco and sohas (A)
 relevant_coco_samples = f'{PATH}/COCO/cvat/relevant_allsample_splits/'
@@ -36,8 +36,6 @@ dmv_dataset = dm.Dataset.import_from(f'{PATH}/DMV/cvat/original', 'cvat')
 dmv_dataset_stats = compute_ann_statistics(dmv_dataset)
 print(dmv_dataset_stats['annotations']['labels']['distribution'])
 
-
-
 # %%
 omv_dataset = dm.Dataset.import_from(f'{PATH}/OCMV/omv/manual_labels_incl_persons/cvat/', 'cvat')
 omv_dataset_stats = compute_ann_statistics(omv_dataset)
@@ -65,6 +63,9 @@ print(compute_ann_statistics(dm.Dataset.import_from(omv_splits_path, 'cvat'))['a
 print(compute_ann_statistics(dm.Dataset.import_from(dmv_splits_path, 'cvat'))['annotations']['labels']['distribution'])
 
 # %%
-omv_dmv_train_merged_stats, omv_dmv_valid_merged_stats = \
-    merge_datasets(input1=omv_splits_path, input2=dmv_splits_path, output=f'{PATH}/MERGED/omv_dmv', export=True,
-                   export_type='cvat')
+merged_datasets = merge_datasets([omv_splits_path, dmv_splits_path], output=f'{PATH}/MERGED/naive/cvat/omv_dmv_test',
+                                 export=True, export_type='cvat')
+
+# %%
+dataset = dm.Dataset.import_from(f'{PATH}/MILVEH/cvat/milveh_all_splits_055/train/', 'cvat')
+dataset.export(f'{PATH}/MILVEH/yolo/milveh_all_splits_055/train/', 'yolo')

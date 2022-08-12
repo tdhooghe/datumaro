@@ -1,7 +1,7 @@
 #%%
 from datumaro.components.operations import compute_ann_statistics
 from utils import PATH, merge_datasets
-import datumaro as dm
+
 #%%
 pistols_path = f'{PATH}/SOHAS/cvat/sohas_auto_splits/'
 rifles_path = f'{PATH}/RIFLES/cvat/autolabel_filtered_rifles_splits/'

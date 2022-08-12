@@ -26,7 +26,7 @@ all_rifles_dataset_stats = compute_ann_statistics(all_rifles_dataset)
 all_rifles_dataset.select(lambda item: len(item.annotations) != 0)
 filtered_rifles_dataset = compute_ann_statistics(all_rifles_dataset)
 
-#%%
+#%% filter out some images
 all_rifles_dataset.export(f'{path}/cvat/filtered', 'cvat', save_images=True)
 
 #%%

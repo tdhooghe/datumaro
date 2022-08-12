@@ -1,14 +1,10 @@
 # %%
-import os
-import glob
-from xml.etree import ElementTree as ET
 import datumaro as dm
 from datumaro.components.dataset import Dataset
 from datumaro.components.operations import compute_ann_statistics
 from utils import convert_to_jpg, create_voc_train_txt, remove_xml_attributes, correct_xml_files, split_dataset
 import fiftyone as fo
 import fiftyone.brain as fob
-from fiftyone import ViewField as F
 from utils import PATH
 
 # %%

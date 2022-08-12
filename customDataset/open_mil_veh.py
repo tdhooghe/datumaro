@@ -1,11 +1,9 @@
 # %%
-import glob
-import os
 
 import datumaro as dm
 
 from datumaro.components.operations import compute_ann_statistics
-from utils import Sampler, images_paths_to_text, remove_segmentations, PATH, split_dataset, label_dataset
+from utils import images_paths_to_text, PATH, label_dataset
 
 # dataset consists of military trucks, military tanks, military aircraft, military helicopters, civilian cars
 # and civilian aircraft

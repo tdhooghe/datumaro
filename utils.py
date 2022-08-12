@@ -13,7 +13,7 @@ from datumaro.components.operations import compute_ann_statistics, IntersectMerg
 from datumaro.components.hl_ops import merge
 from datumaro.plugins import splitter
 
-PATH = "../../../Datasets"
+PATH = "../../Datasets"
 SEED = 1234
 
 
@@ -69,7 +69,7 @@ def split_dataset(dataset, name='valid', output_path=None, train_size=0.9, valid
         subset = splits.get_subset(split)
         splits_data[split] = Dataset(subset)
         splits_stats[split] = compute_ann_statistics(subset)
-        print(f'{str(subset)}: {label_distributions(splits_stats[split])}')
+        print(f'{str(split)}: {label_distributions(splits_stats[split])}')
 
         if export:
             splits_data[split].export(f'{output_path}/{split}', format=export_type, save_images=True)
@@ -82,38 +82,42 @@ def get_immediate_subdirectories(a_dir):
             if os.path.isdir(os.path.join(a_dir, name))]
 
 
-def merge_datasets(input1, input2, output=None, export=False, import_type='cvat', export_type='yolo', simple=False):
+def merge_datasets(inputs, output=None, export=False, import_type='cvat', export_type='yolo', simple=False,
+                   mapping=None, mapping_default='delete'):
     """
     Function that merges train and valid set of two different datasets
-    :param input1:
-    :param input2:
+    :param inputs:
     :param output:
     :param export:
     :param import_type:
     :param export_type:
     :param simple: default False, True if simple merge is desired
+    :param mapping:
     :return:
     """
     # import datasets
-    sets1 = get_immediate_subdirectories(input1)
     output = f'{output}_cvat' if export_type == 'cvat' else output
-    datasets = []
-    for s in sets1:
-        set1 = dm.Dataset.import_from(f'{input1}/{s}', format=import_type)
-        set2 = dm.Dataset.import_from(f'{input2}/{s}', format=import_type)
+    merged_datasets = dict()
+    sets = get_immediate_subdirectories(inputs[0])
+    for set in sets:
+        subsets = []
+        for input in inputs:
+            subsets.append(dm.Dataset.import_from(f'{input}/{set}', format=import_type))
         if simple:
-            merged_dataset = merge(set1, set2)
+            merged_dataset = merge(subsets)
         else:
-            merged_dataset = IntersectMerge()([set1, set2])
-        datasets.append(merged_dataset)
+            merged_dataset = IntersectMerge()(subsets)
+        merged_datasets[set] = merged_dataset
         stats = compute_ann_statistics(merged_dataset)
-
-        print(f'{s}_stats: {label_distributions(stats)}')
+        print(f'{set}_stats: {label_distributions(stats)}')
 
         if export:
-            Dataset(merged_dataset).export(f'{output}/{s}', export_type, save_images=True)
+            dataset = Dataset(merged_dataset)
+            if mapping is not None:
+                dataset.transform('remap_labels', mapping=mapping, default='keep')
+            dataset.export(f'{output}/{set}', export_type, save_images=True)
 
-    return datasets
+    return merged_datasets
 
 
 def move_files(source_folder: pathlib.Path):
